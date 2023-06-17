@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Slider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class SliderController extends Controller
 {
@@ -66,6 +68,18 @@ class SliderController extends Controller
 
     public function store(Request $request)
     {
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|min:5',
+            'caption' => 'required|string|min:10',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors())->withInput();
+        }
+
+
         // ubah nama file gambar dengan angka random
         $imageName = time().'.'.$request->image->extension(); // 1685433155.jpg
 
